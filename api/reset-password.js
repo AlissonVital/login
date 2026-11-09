@@ -54,6 +54,12 @@ export default async function handler(req, res) {
       : null;
 
     if (!expires || Number.isNaN(expires.getTime()) || expires.getTime() < Date.now()) {
+      await sql`
+        UPDATE usuarios
+        SET recovery_token = NULL,
+            recovery_token_expires = NULL
+        WHERE id = ${user.id}
+      `;
       return json(res, 400, {
         ok: false,
         code: 'TOKEN_EXPIRED',

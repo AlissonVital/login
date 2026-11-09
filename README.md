@@ -64,6 +64,7 @@ npx vercel dev
 | POST | `/api/login` | Login |
 | GET | `/api/me` | Sessão atual (Bearer token) |
 | POST | `/api/recover` | Solicita recuperação |
+| GET | `/api/validate-recovery?token=` | Valida link (5 minutos) |
 | POST | `/api/reset-password` | Redefine senha com token |
 
 ## Banco

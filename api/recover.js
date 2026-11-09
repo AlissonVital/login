@@ -50,7 +50,7 @@ export default async function handler(req, res) {
       WHERE id = ${user.id}
     `;
 
-    const recoveryUrl = buildRecoveryUrl(token);
+    const recoveryUrl = buildRecoveryUrl(token, req);
     const mailResult = await sendRecoveryEmail({ to: user.email, recoveryUrl });
     const allowDevLink = process.env.DEV_RETURN_RECOVERY_LINK === 'true';
 

@@ -13,9 +13,14 @@ const btnSubmit = document.getElementById('btn-submit');
 const params = new URLSearchParams(window.location.search);
 const token = params.get('token') || '';
 
-if (!token) {
-  mismatch.textContent = 'Link de recuperação inválido ou ausente.';
+function lockPage(message) {
+  mismatch.textContent = message;
   btnSubmit.disabled = true;
+  senha.disabled = true;
+  confirmar.disabled = true;
+  form.querySelectorAll('.toggle-password').forEach((btn) => {
+    btn.disabled = true;
+  });
 }
 
 btnCancel.addEventListener('click', () => {
@@ -41,6 +46,45 @@ function updateMismatch() {
 
 senha.addEventListener('input', updateMismatch);
 confirmar.addEventListener('input', updateMismatch);
+
+async function validateLink() {
+  if (!token) {
+    lockPage('Link de recuperação inválido ou ausente.');
+    await showAlert('Esta página só pode ser acessada pelo link enviado no e-mail.', 'Recuperação');
+    window.location.href = 'login.html';
+    return false;
+  }
+
+  btnSubmit.disabled = true;
+  mismatch.textContent = 'Validando link...';
+
+  try {
+    const { data } = await apiRequest(
+      `/validate-recovery?token=${encodeURIComponent(token)}`,
+      { method: 'GET' }
+    );
+
+    if (!data.ok) {
+      const message =
+        data.code === 'TOKEN_EXPIRED'
+          ? 'Link de recuperação expirado. Solicite um novo.'
+          : data.error || 'Link de recuperação inválido ou já utilizado';
+      lockPage(message);
+      await showAlert(message, 'Recuperação');
+      window.location.href = 'login.html';
+      return false;
+    }
+
+    mismatch.textContent = '';
+    btnSubmit.disabled = false;
+    return true;
+  } catch {
+    lockPage('Não foi possível validar o link de recuperação.');
+    await showAlert('Falha de conexão com o servidor', 'Erro');
+    window.location.href = 'login.html';
+    return false;
+  }
+}
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -70,6 +114,13 @@ form.addEventListener('submit', async (e) => {
       return;
     }
 
+    if (data.code === 'TOKEN_EXPIRED') {
+      lockPage(data.error || 'Link de recuperação expirado. Solicite um novo.');
+      await showAlert(data.error || 'Link expirado', 'Recuperação');
+      window.location.href = 'login.html';
+      return;
+    }
+
     if (!data.ok) {
       await showAlert(data.error || 'Não foi possível redefinir a senha', 'Erro');
       return;
@@ -80,6 +131,10 @@ form.addEventListener('submit', async (e) => {
   } catch {
     await showAlert('Falha de conexão com o servidor', 'Erro');
   } finally {
-    btnSubmit.disabled = false;
+    if (!senha.disabled) {
+      btnSubmit.disabled = false;
+    }
   }
 });
+
+validateLink();
