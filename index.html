@@ -4,24 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Site Modelo — sistema de autenticação web" />
-    <title>Site Modelo!!!</title>
+    <title>SITE MODELO!!!</title>
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
     <main class="home-layout">
+      <div id="user-session" class="user-session" hidden>
+        <span id="user-firstname" class="user-firstname"></span>
+        <button type="button" id="logout-btn" class="btn-logout">Sair</button>
+      </div>
+
       <section class="matrix-wrap" aria-label="Título do site">
-        <h1 class="matrix-title" data-text="Site Modelo!!!">Site Modelo!!!</h1>
+        <h1 class="matrix-title" data-text="SITE MODELO!!!">SITE MODELO!!!</h1>
       </section>
 
       <section class="home-actions" aria-live="polite">
         <div id="guest-actions">
           <a class="btn-nav" href="login.html">Entrar</a>
           <a class="btn-nav" href="cadastro.html">Cadastrar</a>
-        </div>
-
-        <div id="user-session" class="user-session" hidden>
-          <span id="user-firstname" class="user-firstname"></span>
-          <button type="button" id="logout-btn" class="btn-logout">Sair</button>
         </div>
       </section>
     </main>

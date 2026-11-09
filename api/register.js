@@ -1,6 +1,14 @@
 import bcrypt from 'bcryptjs';
 import { getSql } from '../lib/db.js';
-import { json, methodNotAllowed, readJson, isValidEmail, setCors, clientMeta } from '../lib/http.js';
+import {
+  json,
+  methodNotAllowed,
+  readJson,
+  isValidEmail,
+  setCors,
+  clientMeta,
+  mapServerError,
+} from '../lib/http.js';
 
 export default async function handler(req, res) {
   setCors(res);
@@ -62,6 +70,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('[register]', err);
-    return json(res, 500, { ok: false, error: 'Erro ao cadastrar usuário' });
+    const mapped = mapServerError(err, 'Erro ao cadastrar usuário');
+    return json(res, 500, { ok: false, ...mapped });
   }
 }
