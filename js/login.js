@@ -68,20 +68,32 @@ recoverLink.addEventListener('click', async () => {
       return;
     }
 
-    const message = data.message || 'Um link de recuperação de senha foi enviado para seu e-mail';
-    await showAlert(message, 'Recuperação');
+    if (data.emailSent) {
+      await showAlert(
+        data.message || 'Um link de recuperação de senha foi enviado para seu e-mail',
+        'Recuperação'
+      );
+      return;
+    }
 
     if (data.recoveryUrl) {
       const openLink = await showModal({
         title: 'Modo teste',
-        message: 'SMTP não configurado. Deseja abrir o link de recuperação agora?',
+        message:
+          'O e-mail ainda não foi enviado (SMTP). Deseja abrir o link de recuperação agora?',
         confirmText: 'ABRIR',
         cancelText: 'FECHAR',
       });
       if (openLink.confirmed) {
         window.location.href = data.recoveryUrl;
       }
+      return;
     }
+
+    await showAlert(
+      'Não foi possível enviar o e-mail. Configure SMTP na Vercel.',
+      'Recuperação'
+    );
   } catch {
     await showAlert('Falha de conexão com o servidor', 'Erro');
   } finally {

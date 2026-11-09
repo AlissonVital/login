@@ -52,6 +52,7 @@ export default async function handler(req, res) {
 
     const recoveryUrl = buildRecoveryUrl(token);
     const mailResult = await sendRecoveryEmail({ to: user.email, recoveryUrl });
+    const allowDevLink = process.env.DEV_RETURN_RECOVERY_LINK === 'true';
 
     const { ip, userAgent } = clientMeta(req);
     await sql`
@@ -59,13 +60,28 @@ export default async function handler(req, res) {
       VALUES (${user.id}, 'recuperacao_solicitada', ${ip}, ${userAgent})
     `;
 
+    if (!mailResult.sent && !allowDevLink) {
+      const error =
+        mailResult.reason === 'smtp_not_configured'
+          ? 'Envio de e-mail não configurado. Defina SMTP_* na Vercel.'
+          : 'Não foi possível enviar o e-mail de recuperação. Confira SMTP_USER e a senha de app.';
+      return json(res, 503, {
+        ok: false,
+        code: 'EMAIL_NOT_SENT',
+        error,
+        emailSent: false,
+      });
+    }
+
     const response = {
       ok: true,
-      message: 'Um link de recuperação de senha foi enviado para seu e-mail',
+      message: mailResult.sent
+        ? 'Um link de recuperação de senha foi enviado para seu e-mail'
+        : 'Token gerado. SMTP ainda não está configurado (modo teste).',
       emailSent: mailResult.sent,
     };
 
-    if (process.env.DEV_RETURN_RECOVERY_LINK === 'true') {
+    if (allowDevLink) {
       response.recoveryUrl = recoveryUrl;
     }
 
