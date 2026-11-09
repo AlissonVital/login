@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Cadastro de usuário — Site Modelo" />
+    <title>Tela de Cadastro</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <a class="home-btn" href="index.html" aria-label="Voltar para a página inicial">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3.2 3.5 10.2h2.3V20h5.1v-5.4h2.2V20h5.1V10.2h2.3L12 3.2z" />
+        </svg>
+      </a>
+
+      <h1 class="page-title">Tela de Cadastro</h1>
+
+      <form id="cadastro-form" class="form-shell" novalidate>
+        <div class="field">
+          <label for="nome">Nome</label>
+          <input
+            id="nome"
+            name="nome"
+            type="text"
+            placeholder="Digite o nome completo"
+            autocomplete="name"
+            required
+            minlength="2"
+          />
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="senha">Senha</label>
+          <input
+            id="senha"
+            name="senha"
+            type="password"
+            autocomplete="new-password"
+            required
+            minlength="6"
+          />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="btn-cancel" class="btn btn-cancel">CANCELAR</button>
+          <button type="submit" id="btn-submit" class="btn btn-submit">ENVIAR</button>
+        </div>
+      </form>
+    </main>
+
+    <script type="module" src="js/cadastro.js"></script>
+  </body>
+</html>
